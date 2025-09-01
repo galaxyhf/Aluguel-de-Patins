@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aluguel de Patins</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg"></div>
+  <header class="header">
+    <h1><span class="logo">Aluguel</span> de Patins</h1>
+    <nav class="nav">
+      <button id="btn-alugar" class="nav-btn active" data-section="alugar">Novo Aluguel</button>
+      <button id="btn-encerrar" class="nav-btn" data-section="encerrar">Devolução</button>
+      <button id="btn-fechar-caixa" class="nav-btn" data-section="fechar-caixa">Fechamento</button>
+      <button id="btn-consultas" class="nav-btn" data-section="consultas">Consultas</button>
+    </nav>
+  </header>
+
+  <main class="card">
+    <!-- Alugar Patins -->
+    <section id="alugar-section" class="section active">
+      <h2>Novo aluguel</h2>
+      <form id="form-alugar" autocomplete="off">
+        <div class="grid">
+          <div class="field">
+            <label for="tamanho">Número que calça</label>
+            <select id="tamanho" name="tamanho" required>
+              <option value="">Selecione...</option>
+              <option>35</option><option>36</option><option>37</option><option>38</option>
+              <option>39</option><option>40</option><option>41</option><option>42</option>
+              <option>43</option><option>44</option>
+            </select>
+          </div>
+          <div class="field readonly">
+            <label>Preço/hora</label>
+            <div id="preco-hora">R$ 10,00</div>
+          </div>
+          <div class="field readonly">
+            <label>Hora de início (auto)</label>
+            <div id="hora-previa">--:--</div>
+          </div>
+        </div>
+
+        <div class="inline">
+          <button type="button" id="verificar-disponibilidade">Verificar disponibilidade</button>
+          <span id="disponibilidade-msg" class="hint"></span>
+        </div>
+
+        <div id="registro-aluguel" class="panel hidden">
+          <div class="grid">
+            <div class="field">
+              <label for="cpf">CPF do cliente</label>
+              <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" inputmode="numeric" maxlength="14" required />
+              <small class="muted">Validação por dígitos verificadores</small>
+            </div>
+            <div class="field readonly">
+              <label>Par de patins (ID)</label>
+              <div id="patins-id">—</div>
+            </div>
+          </div>
+          <button type="submit">Registrar aluguel</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Encerrar Aluguel -->
+    <section id="encerrar-section" class="section">
+      <h2>Devolução / Encerrar aluguel</h2>
+      <form id="form-encerrar">
+        <div class="grid">
+          <div class="field">
+            <label for="id-patins">ID do par ou CPF do cliente</label>
+            <input type="text" id="id-patins" placeholder="Ex: P001 ou 000.000.000-00" maxlength="20" required />
+          </div>
+          <div class="field readonly">
+            <label>Hora de encerramento (auto)</label>
+            <div id="hora-fim-previa">--:--</div>
+          </div>
+        </div>
+
+        <div class="inline">
+          <button type="button" id="buscar-aluguel">Buscar aluguel</button>
+          <span id="erro-encerrar" class="error"></span>
+        </div>
+
+        <div id="dados-aluguel" class="panel hidden">
+          <div class="details">
+            <p><strong>Hora de início:</strong> <span id="hora-inicio"></span></p>
+            <p><strong>CPF do cliente:</strong> <span id="cpf-cliente"></span></p>
+            <p><strong>Hora de encerramento:</strong> <span id="hora-fim"></span></p>
+            <p><strong>Total a pagar:</strong> R$ <span id="total-pagar"></span></p>
+          </div>
+
+          <div class="grid">
+            <label class="check"><input type="checkbox" id="patins-danificado" /> Patins danificado (acréscimo)</label>
+            <div class="field">
+              <label for="forma-pagamento">Forma de pagamento</label>
+              <select id="forma-pagamento" required>
+                <option value="">Selecione</option>
+                <option value="dinheiro">Dinheiro</option>
+                <option value="cartao">Cartão</option>
+                <option value="pix">PIX</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit">Confirmar encerramento</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Fechar Caixa -->
+    <section id="fechar-caixa-section" class="section">
+      <h2>Fechamento do caixa</h2>
+      <p class="muted">Gera os totais por forma de pagamento com base nos alugueis encerrados.</p>
+      <div class="inline">
+        <button id="btn-gerar-relatorio">Gerar relatório</button>
+        <span class="hint">As tabelas de <em>Consultas</em> são atualizadas automaticamente.</span>
+      </div>
+
+      <div id="relatorio-caixa" class="panel hidden">
+        <h3>Totais por forma de pagamento</h3>
+        <ul id="totais-pagamento" class="list"></ul>
+        <p class="total"><strong>Total final:</strong> R$ <span id="total-final"></span></p>
+        <button id="btn-confirmar-fechamento">Confirmar fechamento</button>
+      </div>
+    </section>
+
+    <!-- Consultas -->
+    <section id="consultas-section" class="section">
+      <h2>Consultas</h2>
+      <div class="tabs">
+        <button class="tab active" data-tab="abertos">Em andamento</button>
+        <button class="tab" data-tab="encerrados">Encerrados</button>
+      </div>
+
+      <div class="tab-content active" id="tab-abertos">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Par (ID)</th><th>Tamanho</th><th>CPF</th><th>Início</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-abertos"></tbody>
+        </table>
+      </div>
+
+      <div class="tab-content" id="tab-encerrados">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Par (ID)</th><th>Tamanho</th><th>CPF</th><th>Início</th><th>Fim</th><th>Danificado</th><th>Pagamento</th><th>Total (R$)</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-encerrados"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <footer class="footer">
+    <small>Desenvolvido por Caio Silva</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
