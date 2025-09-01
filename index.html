@@ -29,12 +29,16 @@
         <div class="grid">
           <div class="field">
             <label for="tamanho">Número que calça</label>
-            <select id="tamanho" name="tamanho" required>
-              <option value="">Selecione...</option>
-              <option>35</option><option>36</option><option>37</option><option>38</option>
-              <option>39</option><option>40</option><option>41</option><option>42</option>
-              <option>43</option><option>44</option>
-            </select>
+            <input
+              id="tamanho"
+              type="text"               
+              inputmode="numeric"         
+              pattern="\d*"
+              maxlength="2"
+              placeholder="Digite o número do calçado"
+              required
+            />
+            <small id="tamanho-erro" class="error"></small>
           </div>
           <div class="field readonly">
             <label>Preço/hora</label>

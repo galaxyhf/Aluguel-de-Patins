@@ -280,12 +280,14 @@ $('#verificar-disponibilidade').addEventListener('click', () => {
   if (isNaN(tamanhoSel)){
     disponibilidadeMsg.textContent = 'Selecione um tamanho válido.';
     disponibilidadeMsg.classList.remove('ok');
+    disponibilidadeMsg.classList.add('msg-erro');
     return;
   }
 
   const patins = patinsDisponiveis.find(p => p.tamanho === tamanhoSel && p.disponivel);
   if (patins){
     disponibilidadeMsg.textContent = `Disponível! Par ${patins.id} para o número ${tamanhoSel}.`;
+    disponibilidadeMsg.classList.remove('msg-erro');
     disponibilidadeMsg.classList.add('ok');
     registroAluguelDiv.dataset.patinsId = patins.id;
     patinsIdDisplay.textContent = patins.id;
@@ -293,6 +295,7 @@ $('#verificar-disponibilidade').addEventListener('click', () => {
   } else {
     disponibilidadeMsg.textContent = 'Não há patins disponíveis para esse tamanho.';
     disponibilidadeMsg.classList.remove('ok');
+    disponibilidadeMsg.classList.add('msg-erro');
   }
 });
 

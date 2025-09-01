@@ -296,3 +296,13 @@ button:disabled {
 .tab-content.active {
   display: block;
 }
+
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.msg-erro {
+  color: var(--err);
+}
