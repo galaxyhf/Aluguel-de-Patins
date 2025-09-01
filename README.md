@@ -2,7 +2,7 @@
 
 [👉 Acesse o sistema aqui](https://aluguelpatins.netlify.app)
 
-Um sistema simples de **PDV para aluguel de patins**, feito em **HTML, CSS e JavaScript puro**, rodando 100% no navegador (sem backend).
+Um sistema simples de **Aluguel de Patins**, feito em **HTML, CSS e JavaScript puro**, rodando 100% no navegador (sem backend).
 
 ---
 
