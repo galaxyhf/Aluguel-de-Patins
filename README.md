@@ -30,12 +30,6 @@ Um sistema simples de **PDV para aluguel de patins**, feito em **HTML, CSS e Jav
 
 ---
 
-## 🖼️ Capturas de tela
-
-> *(adicione aqui prints das telas principais: Novo Aluguel, Consultas, Fechamento de Caixa)*
-
----
-
 ## 🛠️ Tecnologias usadas
 
 - **HTML5** – Estrutura das páginas  
