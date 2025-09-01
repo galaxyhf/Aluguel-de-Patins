@@ -15,7 +15,6 @@ const patinsDisponiveis = [
 ];
 
 const alugueis = [];
-// Estrutura:
 // { idPatins, tamanho, cpf, horaInicio, horaFim, total, formaPagamento, danificado, contabilizado }
 
 // ================================
@@ -27,9 +26,9 @@ const valorDano   = 20;  // acréscimo por dano
 // ================================
 // Estado do Relatório de Fechamento
 // ================================
-let relatorioPendentes   = []; // itens incluídos no último "Gerar relatório"
-let relatorioTotais      = {}; // totais por forma
-let relatorioTotalGeral  = 0;  // total geral
+let relatorioPendentes   = [];
+let relatorioTotais      = {};
+let relatorioTotalGeral  = 0;
 
 // ================================
 // Utilidades
@@ -63,7 +62,7 @@ function toast(msg, type='info'){
   else { box.style.borderColor = 'var(--border)'; }
 }
 
-// Validação de CPF (dígitos verificadores)
+// Validação de CPF
 function cpfValido(cpf){
   cpf = (cpf||'').replace(/\D/g,'');
   if (!cpf || cpf.length !== 11) return false;
@@ -98,40 +97,31 @@ function formatarCPF(valor) {
   }
 }
 
-// Abre o relatório em nova guia com botão "Baixar/Imprimir PDF"
+// Abre relatório em nova guia com botão "Baixar/Imprimir PDF"
 function abrirRelatorioPDF(itens, totaisPorForma, totalGeral){
   const win = window.open('', '_blank');
 
   const estilo = `
     <style>
-      :root{
-        --ink:#111827; --muted:#6b7280; --border:#e5e7eb;
-        --accent:#6ee7ff; --accent2:#a78bfa;
-      }
+      :root{ --ink:#111827; --muted:#6b7280; --border:#e5e7eb; --accent:#6ee7ff; --accent2:#a78bfa; }
       *{box-sizing:border-box;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
       body{margin:0;background:#fff;color:var(--ink)}
       header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
       h1{margin:0;font-size:20px}
       .sub{color:var(--muted);font-size:13px;margin-top:4px}
       .btns{display:flex;gap:10px}
-      button{
-        border:0; padding:10px 14px; border-radius:10px; cursor:pointer;
-        background:linear-gradient(135deg,var(--accent2),var(--accent)); color:#111827; font-weight:700;
-      }
+      button{border:0;padding:10px 14px;border-radius:10px;cursor:pointer;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#111827;font-weight:700}
       main{padding:20px 24px}
       .sec{margin-bottom:18px}
-      table{width:100%; border-collapse:collapse; border:1px solid var(--border); border-radius:12px; overflow:hidden}
-      th,td{padding:10px 12px; border-bottom:1px solid var(--border); text-align:left; font-size:14px}
-      thead th{background:#f3f4f6; color:#374151; font-weight:600}
+      table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+      th,td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;font-size:14px}
+      thead th{background:#f3f4f6;color:#374151;font-weight:600}
       tfoot td{font-weight:700}
       .totais{margin-top:12px}
-      .totais ul{margin:8px 0 0 18px; padding:0}
+      .totais ul{margin:8px 0 0 18px;padding:0}
       .totais li{margin:2px 0}
       .right{text-align:right}
-      @media print{
-        button{display:none}
-        header{border-bottom:none}
-      }
+      @media print{button{display:none} header{border-bottom:none}}
     </style>
   `;
 
@@ -153,23 +143,19 @@ function abrirRelatorioPDF(itens, totaisPorForma, totalGeral){
       <td>${formatDateTime(a.horaInicio)}</td>
       <td>${formatDateTime(a.horaFim)}</td>
       <td>${a.danificado ? 'Sim' : 'Não'}</td>
-      <td>${(a.formaPagamento||'').toUpperCase()}</td>
+      <td>${(a.formaPagamento||'')}</td>
       <td class="right">R$ ${formatBRL(a.total)}</td>
     </tr>
   `).join('');
 
   const listaTotais = Object.keys(totaisPorForma).map(forma =>
-    `<li><strong>${forma.toUpperCase()}:</strong> R$ ${formatBRL(totaisPorForma[forma])}</li>`
+    `<li><strong>${forma}:</strong> R$ ${formatBRL(totaisPorForma[forma])}</li>`
   ).join('') || '<li>—</li>';
 
   const html = `
     <!DOCTYPE html>
     <html lang="pt-BR">
-      <head>
-        <meta charset="utf-8" />
-        <title>Relatório de Fechamento</title>
-        ${estilo}
-      </head>
+      <head><meta charset="utf-8" /><title>Relatório de Fechamento</title>${estilo}</head>
       <body>
         <header>
           <div>
@@ -177,37 +163,23 @@ function abrirRelatorioPDF(itens, totaisPorForma, totalGeral){
             <div class="sub">Gerado em ${formatDateTime(agora)} | Período: ${periodo}</div>
           </div>
           <div class="btns">
-            <button onclick="window.print()">Imprimir PDF</button>
+            <button onclick="window.print()">Baixar/Imprimir PDF</button>
           </div>
         </header>
-
         <main>
           <section class="sec">
             <table>
               <thead>
                 <tr>
-                  <th>Par (ID)</th>
-                  <th>Tam.</th>
-                  <th>CPF</th>
-                  <th>Início</th>
-                  <th>Fim</th>
-                  <th>Danificado</th>
-                  <th>Pagamento</th>
-                  <th class="right">Total (R$)</th>
+                  <th>Par (ID)</th><th>Tam.</th><th>CPF</th><th>Início</th><th>Fim</th><th>Danificado</th><th>Pagamento</th><th class="right">Total (R$)</th>
                 </tr>
               </thead>
-              <tbody>
-                ${linhas || `<tr><td colspan="8">Nenhum lançamento neste fechamento.</td></tr>`}
-              </tbody>
+              <tbody>${linhas || `<tr><td colspan="8">Nenhum lançamento neste fechamento.</td></tr>`}</tbody>
               <tfoot>
-                <tr>
-                  <td colspan="7" class="right">Total final</td>
-                  <td class="right">R$ ${formatBRL(totalGeral)}</td>
-                </tr>
+                <tr><td colspan="7" class="right">Total final</td><td class="right">R$ ${formatBRL(totalGeral)}</td></tr>
               </tfoot>
             </table>
           </section>
-
           <section class="sec totais">
             <strong>Totais por forma de pagamento</strong>
             <ul>${listaTotais}</ul>
@@ -259,28 +231,24 @@ const formAlugar = $('#form-alugar');
 const horaPrevia = $('#hora-previa');
 const patinsIdDisplay = $('#patins-id');
 
-// Hora de início (auto) prévia
-function updateHoraPrevia(){
-  horaPrevia.textContent = formatDateTime(new Date());
-}
-setInterval(updateHoraPrevia, 1000);
-updateHoraPrevia();
+function updateHoraPrevia(){ horaPrevia.textContent = formatDateTime(new Date()); }
+setInterval(updateHoraPrevia, 1000); updateHoraPrevia();
 
-// Máscara no input de CPF de novo aluguel
+// Máscara no input de CPF (novo aluguel)
 $('#cpf')?.addEventListener('input', (e) => {
   e.target.value = formatarCPF(e.target.value).slice(0,14);
 });
 
-// Verificar disponibilidade por tamanho
+// Verificar disponibilidade (tamanho 35–44)
 $('#verificar-disponibilidade').addEventListener('click', () => {
-  const tamanhoSel = parseInt($('#tamanho').value);
-  disponibilidadeMsg.textContent='';
+  const tamanhoSel = parseInt($('#tamanho').value, 10);
+  disponibilidadeMsg.textContent = '';
   registroAluguelDiv.classList.add('hidden');
 
-  if (isNaN(tamanhoSel)){
-    disponibilidadeMsg.textContent = 'Selecione um tamanho válido.';
+  if (isNaN(tamanhoSel) || tamanhoSel < 35 || tamanhoSel > 44){
+    disponibilidadeMsg.textContent = 'Não temos patins desse tamanho.';
     disponibilidadeMsg.classList.remove('ok');
-    disponibilidadeMsg.classList.add('msg-erro');
+    disponibilidadeMsg.classList.add('msg-erro'); // certifique-se de ter .msg-erro { color: var(--err); }
     return;
   }
 
@@ -305,22 +273,16 @@ formAlugar.addEventListener('submit', (e) => {
   const cpfInput = $('#cpf').value.trim();
   const cpf = cpfInput.replace(/\D/g,'');
   const patinsId = registroAluguelDiv.dataset.patinsId;
-  const tamanhoSel = parseInt($('#tamanho').value);
+  const tamanhoSel = parseInt($('#tamanho').value, 10);
 
-  if(!cpfValido(cpf)){
-    toast('CPF inválido.', 'err');
-    return;
-  }
-  if(!patinsId){
-    toast('Verifique a disponibilidade antes.', 'err');
-    return;
-  }
+  if(!cpfValido(cpf)){ toast('CPF inválido.', 'err'); return; }
+  if(!patinsId){ toast('Verifique a disponibilidade antes.', 'err'); return; }
 
   const horaInicio = new Date();
   alugueis.push({
     idPatins: patinsId,
     tamanho: tamanhoSel,
-    cpf: cpf, // armazenado sem máscara
+    cpf: cpf,
     horaInicio: horaInicio,
     horaFim: null,
     total: null,
@@ -335,6 +297,7 @@ formAlugar.addEventListener('submit', (e) => {
   toast(`Aluguel registrado! Par ${patinsId}.`, 'ok');
   formAlugar.reset();
   disponibilidadeMsg.textContent='';
+  disponibilidadeMsg.classList.remove('ok','msg-erro');
   registroAluguelDiv.classList.add('hidden');
   renderConsultas();
 });
@@ -354,33 +317,47 @@ const erroEncerrarDiv = $('#erro-encerrar');
 const horaFimPrevia = $('#hora-fim-previa');
 const formEncerrar = $('#form-encerrar');
 
+// NOVO: campo de “Tipo de cartão”
+const tipoCartaoField  = document.querySelector('#tipo-cartao-field');
+const tipoCartaoSelect = document.querySelector('#tipo-cartao');
+
 setInterval(() => { horaFimPrevia.textContent = formatDateTime(new Date()); }, 1000);
 let aluguelAtual = null;
 
-// Máscara de CPF em tempo real no campo de busca, se for só números.
-// Se tiver letras (ex.: P001), não aplica máscara.
+// Mostrar/ocultar “Tipo de cartão” conforme forma de pagamento
+formaPagamentoSelect.addEventListener('change', () => {
+  if ((formaPagamentoSelect.value || '').toLowerCase() === 'cartao') {
+    tipoCartaoField?.classList.remove('hidden');
+  } else {
+    tipoCartaoField?.classList.add('hidden');
+    if (tipoCartaoSelect) tipoCartaoSelect.value = '';
+  }
+});
+
+// Máscara de CPF em tempo real no campo de busca (só números)
 const inputBusca = document.querySelector('#id-patins');
 inputBusca.addEventListener('input', (e) => {
-  let val = e.target.value;
-  if (/[a-zA-Z]/.test(val)) return;               // provável ID
+  const val = e.target.value;
+  if (/[a-zA-Z]/.test(val)) return;             // provável ID
   const digits = val.replace(/\D/g, '').slice(0, 11);
-  e.target.value = formatarCPF(digits);           // máscara parcial
+  e.target.value = formatarCPF(digits);
 });
 
 // Enter também dispara buscar
 inputBusca.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    btnBuscarAluguel.click();
-  }
+  if (e.key === 'Enter') { e.preventDefault(); btnBuscarAluguel.click(); }
 });
 
-// Buscar aluguel por ID ou CPF
+// Buscar por ID ou CPF
 btnBuscarAluguel.addEventListener('click', () => {
   let entrada = $('#id-patins').value.trim();
   erroEncerrarDiv.textContent = '';
   dadosAluguelDiv.classList.add('hidden');
   aluguelAtual = null;
+
+  // reset tipo de cartão
+  tipoCartaoField?.classList.add('hidden');
+  if (tipoCartaoSelect) tipoCartaoSelect.value = '';
 
   if (!entrada){
     erroEncerrarDiv.textContent = 'Informe o ID do par ou CPF.';
@@ -391,13 +368,12 @@ btnBuscarAluguel.addEventListener('click', () => {
   if (cpfBusca.length === 11) {
     const abertosDoCpf = alugueis
       .filter(a => a.cpf === cpfBusca && a.horaFim === null)
-      .sort((a, b) => b.horaInicio - a.horaInicio); // mais recente
+      .sort((a, b) => b.horaInicio - a.horaInicio);
     aluguelAtual = abertosDoCpf[0] || null;
   } else {
     const idNorm = entrada.toLowerCase();
     aluguelAtual = alugueis.find(a =>
-      a.horaFim === null &&
-      String(a.idPatins).toLowerCase() === idNorm
+      a.horaFim === null && String(a.idPatins).toLowerCase() === idNorm
     ) || null;
   }
 
@@ -448,6 +424,17 @@ formEncerrar.addEventListener('submit', (e) => {
     return;
   }
 
+  // Se cartão → precisa escolher crédito/débito
+  let formaFinal = formaPagamento;
+  if ((formaPagamento || '').toLowerCase() === 'cartao') {
+    if (!tipoCartaoSelect?.value) {
+      toast('Selecione se é Crédito ou Débito.', 'err');
+      tipoCartaoSelect?.focus();
+      return;
+    }
+    formaFinal = `Cartão (${tipoCartaoSelect.value})`;
+  }
+
   // Finaliza aluguel
   aluguelAtual.horaFim = new Date();
   aluguelAtual.danificado = patinsDanificadoCheckbox.checked;
@@ -458,7 +445,7 @@ formEncerrar.addEventListener('submit', (e) => {
   if (aluguelAtual.danificado) total += valorDano;
 
   aluguelAtual.total = total;
-  aluguelAtual.formaPagamento = formaPagamento;
+  aluguelAtual.formaPagamento = formaFinal;
 
   // Libera o par
   const patins = patinsDisponiveis.find(p => p.id === aluguelAtual.idPatins);
@@ -471,6 +458,9 @@ formEncerrar.addEventListener('submit', (e) => {
   dadosAluguelDiv.classList.add('hidden');
   erroEncerrarDiv.textContent = '';
   aluguelAtual = null;
+
+  tipoCartaoField?.classList.add('hidden');
+  if (tipoCartaoSelect) tipoCartaoSelect.value = '';
 
   renderConsultas();
   if (typeof relatorioCaixaDiv !== 'undefined') {
@@ -507,7 +497,7 @@ btnGerarRelatorio.addEventListener('click', () => {
   totaisPagamentoUl.innerHTML = '';
   Object.keys(relatorioTotais).forEach(forma => {
     const li = document.createElement('li');
-    li.textContent = `${forma.charAt(0).toUpperCase() + forma.slice(1)}: R$ ${formatBRL(relatorioTotais[forma])}`;
+    li.textContent = `${forma}: R$ ${formatBRL(relatorioTotais[forma])}`;
     totaisPagamentoUl.appendChild(li);
   });
   totalFinalSpan.textContent = formatBRL(relatorioTotalGeral);
@@ -522,7 +512,6 @@ btnGerarRelatorio.addEventListener('click', () => {
 
 // Confirmar fechamento → abre relatório em nova guia e contabiliza
 btnConfirmarFechamento.addEventListener('click', () => {
-  // Se o usuário confirmar sem gerar antes, monta agora
   if (!Array.isArray(relatorioPendentes) || relatorioPendentes.length === 0) {
     const pendentes = alugueis.filter(a =>
       a.horaFim && a.formaPagamento && a.total && !a.contabilizado
@@ -538,10 +527,8 @@ btnConfirmarFechamento.addEventListener('click', () => {
     });
   }
 
-  // Abre relatório (PDF via print) em nova guia
   abrirRelatorioPDF(relatorioPendentes, relatorioTotais, relatorioTotalGeral);
 
-  // Marca como contabilizados todos os itens deste fechamento
   let marcados = 0;
   alugueis.forEach(a => {
     if (relatorioPendentes.includes(a)) {
@@ -550,18 +537,14 @@ btnConfirmarFechamento.addEventListener('click', () => {
     }
   });
 
-  // Limpa estado do relatório e fecha painel
   relatorioPendentes = [];
   relatorioTotais = {};
   relatorioTotalGeral = 0;
 
   relatorioCaixaDiv.classList.add('hidden');
 
-  if (marcados === 0) {
-    toast('Nada para fechar. Já está tudo contabilizado.', 'ok');
-  } else {
-    toast(`Fechamento do caixa realizado (${marcados} lançamento(s)).`, 'ok');
-  }
+  if (marcados === 0) toast('Nada para fechar. Já está tudo contabilizado.', 'ok');
+  else toast(`Fechamento do caixa realizado (${marcados} lançamento(s)).`, 'ok');
 });
 
 // ================================
@@ -594,7 +577,7 @@ function renderConsultas(){
       <td>${formatDateTime(a.horaInicio)}</td>
       <td>${formatDateTime(a.horaFim)}</td>
       <td>${a.danificado ? 'Sim' : 'Não'}</td>
-      <td>${(a.formaPagamento||'').toUpperCase()}</td>
+      <td>${(a.formaPagamento||'')}</td>
       <td>${formatBRL(a.total)}</td>`;
     tbodyEncerrados.appendChild(tr);
   });
